@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "976955858448",
+    "project_id": "potatomarket-857fc",
+    "storage_bucket": "potatomarket-857fc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:976955858448:android:2920836503b34038a2b495",
+        "android_client_info": {
+          "package_name": "com.pttmarket.potatomarket"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEy1wGV6F_s1V-FAj3qBo9Cc--HOjY4-Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
