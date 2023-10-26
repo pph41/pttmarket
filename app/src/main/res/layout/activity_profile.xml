@@ -1,0 +1,125 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:contest="potato.UserProfileActivity">
+
+    <!-- 상단 칸 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+        <!-- 내 정보 -->
+        <TextView
+            android:id="@+id/userProfileTitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="내 정보"
+            android:textSize="24sp"
+            android:layout_marginTop="5dp" />
+
+        <!-- 버튼 그룹 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 프로필 수정 버튼 -->
+            <Button
+                android:id="@+id/editProfileButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="프로필 수정"
+                android:layout_marginTop="16dp" />
+
+            <!-- 내 게시글 버튼 -->
+            <Button
+                android:id="@+id/myPostsButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="내 게시글"
+                android:layout_marginTop="16dp" />
+
+            <!-- 내 시간표 버튼 -->
+            <Button
+                android:id="@+id/myScheduleButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="내 시간표"
+                android:layout_marginTop="16dp" />
+        </LinearLayout>
+
+        <!-- 사용자 정보 칸 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- 사용자 이름 -->
+            <TextView
+                android:id="@+id/usernameTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="사용자 이름"
+                android:textSize="18sp" />
+
+            <!-- 이메일 -->
+            <TextView
+                android:id="@+id/emailTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="example@gwnu.ac.kr"
+                android:textSize="16sp" />
+
+            <!-- 전화번호 -->
+            <TextView
+                android:id="@+id/phoneTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="010-1234-5678"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 하단 칸 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <!-- 팔아요 버튼 -->
+        <Button
+            android:id="@+id/sellButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="팔아요" />
+
+        <!-- 채팅 버튼 -->
+        <Button
+            android:id="@+id/chatButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="채팅" />
+
+        <!-- 내 정보 버튼 -->
+        <Button
+            android:id="@+id/myProfileButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="내 정보" />
+    </LinearLayout>
+</LinearLayout>
