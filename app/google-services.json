@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "852814550158",
+    "firebase_url": "https://potato-fd8f1-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "potato-fd8f1",
+    "storage_bucket": "potato-fd8f1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:852814550158:android:0b769d5129c5117673e5df",
+        "android_client_info": {
+          "package_name": "com.example.firebaselistexample"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJXfsnmP2oRJJj0RavIpr5lLB_2kn_9aE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
