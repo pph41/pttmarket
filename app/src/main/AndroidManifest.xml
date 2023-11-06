@@ -45,6 +45,7 @@
         <activity
             android:name=".UserProfileActivity"
             android:label="@string/app_name"
+            android:theme="@style/Theme.AppCompat"
             android:exported="true">
 
             <intent-filter>
@@ -61,6 +62,7 @@
         <activity
             android:name=".ChatActivity"
             android:label="@string/app_name"
+            android:theme="@style/Theme.AppCompat"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.example.potato.action.CHAT" />
@@ -72,12 +74,14 @@
         <activity
             android:name=".ChatListActivity"
             android:label="@string/app_name"
+            android:theme="@style/Theme.AppCompat"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.example.potato.action.CHAT_LIST" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

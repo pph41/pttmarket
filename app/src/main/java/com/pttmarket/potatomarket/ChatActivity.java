@@ -1,91 +1,86 @@
 package com.pttmarket.potatomarket;
 
-import android.content.Intent;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.LinearLayout;
-
-import androidx.appcompat.app.AppCompatActivity;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 
 public class ChatActivity extends AppCompatActivity {
-
-    private String chatRoomName; // 채팅방 이름을 저장할 변수
-    private ListView chatRecyclerView;
+    private String roomName;
     private EditText messageEditText;
-    private Button sendButton;
-    private Button attachButton;
-    private Button backButton;
-    private LinearLayout attachmentButtonsLayout;
+    private FirebaseAuth mAuth;
+    private DatabaseReference databaseReference;
+    private ChatAdapter chatAdapter;
+    private ListView chatListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        // 채팅방 이름을 인텐트로부터 전달받음
-        Intent intent = getIntent();
-        if (intent != null) {
-            chatRoomName = intent.getStringExtra("chatRoom");
-        }
-
-        // 채팅방 이름을 화면에 표시
-        setTitle(chatRoomName);
-
-        // UI 요소 초기화
-        chatRecyclerView = findViewById(R.id.chatRecyclerView);
+        mAuth = FirebaseAuth.getInstance();
         messageEditText = findViewById(R.id.messageEditText);
-        sendButton = findViewById(R.id.sendButton);
-        attachButton = findViewById(R.id.attachButton);
-        attachmentButtonsLayout = findViewById(R.id.attachmentButtonsLayout);
-        backButton = findViewById(R.id.backButton);
+        chatListView = findViewById(R.id.chatListView);
 
-        // + 버튼 클릭 시, 첨부 버튼들을 표시하거나 숨깁니다.
-        attachButton.setOnClickListener(new View.OnClickListener() {
+        // ChatListActivity에서 전달한 채팅방 이름 가져오기
+        roomName = getIntent().getStringExtra("roomName");
+
+        chatAdapter = new ChatAdapter(this, R.layout.chat_message_item);
+        chatListView.setAdapter(chatAdapter);
+
+        // Firebase Realtime Database에서 채팅 메시지를 가져오는 코드
+        databaseReference = FirebaseDatabase.getInstance().getReference("chat_rooms").child(roomName).child("messages");
+        databaseReference.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onClick(View v) {
-                toggleAttachmentButtons();
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String s) {
+                ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
+                chatAdapter.add(chatMessage);
+                chatAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
 
-        // 메시지 전송 버튼 클릭 시, 메시지를 전송합니다.
-        sendButton.setOnClickListener(new View.OnClickListener() {
+        // 메시지를 보내는 버튼 구현
+        findViewById(R.id.sendButton).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                sendMessage();
+            public void onClick(View view) {
+                String messageText = messageEditText.getText().toString().trim();
+                if (!messageText.isEmpty()) {
+                    sendMessage(messageText);
+                }
             }
         });
-
-        //backButton.setOnClickListener(new View.OnClickListener() {
-        //    @Override
-        //    public void onClick(View v) {
-                // 뒤로가기 버튼 클릭 시 동작 정의
-        //        finish(); // 현재 Activity를 닫음
-        //    }
-        //});
-
     }
 
-    // 첨부 버튼들을 표시하거나 숨기는 메서드
-    private void toggleAttachmentButtons() {
-        if (attachmentButtonsLayout.getVisibility() == View.VISIBLE) {
-            attachmentButtonsLayout.setVisibility(View.GONE);
-        } else {
-            attachmentButtonsLayout.setVisibility(View.VISIBLE);
-        }
+    private void sendMessage(String messageText) {
+        DatabaseReference messagesRef = databaseReference.push();
+        ChatMessage chatMessage = new ChatMessage(messageText, mAuth.getCurrentUser().getDisplayName());
+        messagesRef.setValue(chatMessage);
+        messageEditText.setText("");
     }
 
-    // 메시지를 전송하는 메서드 (이 부분은 실제 메시지 전송 기능으로 구현해야 합니다.)
-    private void sendMessage() {
-        String message = messageEditText.getText().toString();
-        // 메시지 전송 로직을 추가하세요.
-        // 채팅 대화 목록에 메시지를 추가하고 화면을 업데이트합니다.
-        // 이 부분은 실제 서버와의 통신 또는 데이터베이스 연동이 필요합니다.
-        // 예를 들어, 어떤 채팅 메시지 모델을 만들고 데이터를 저장하는 방식으로 구현할 수 있습니다.
-        // 여기에서는 간단한 예제로 메시지를 출력하는 것으로 대체합니다.
-        // chatAdapter.add(message); // chatAdapter는 ListView용 어댑터입니다.
-        // messageEditText.setText(""); // 메시지 입력란 비우기
-    }
 }

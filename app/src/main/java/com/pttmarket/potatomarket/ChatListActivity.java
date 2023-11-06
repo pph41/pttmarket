@@ -1,44 +1,68 @@
 package com.pttmarket.potatomarket;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
-
-
-import androidx.appcompat.app.AppCompatActivity;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ChatListActivity extends AppCompatActivity {
-    private ImageView profileImageView;
-    private TextView usernameTextView;
     private ListView chatListView;
+    private List<String> chatRoomList;
+    private ArrayAdapter<String> chatRoomListAdapter;
+    private DatabaseReference databaseReference;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatlist);
 
-        ListView chatListView = findViewById(R.id.chatListView);
-        String[] chatRooms = {"User1", "User2", "User3"}; // 하드 코딩된 채팅방 목록
+        mAuth = FirebaseAuth.getInstance();
+        chatListView = findViewById(R.id.chatListView);
+        chatRoomList = new ArrayList<>();
+        chatRoomListAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, chatRoomList);
+        chatListView.setAdapter(chatRoomListAdapter);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, chatRooms);
-        chatListView.setAdapter(adapter);
-
-        chatListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        // Firebase Realtime Database에서 채팅 목록을 가져오는 코드
+        databaseReference = FirebaseDatabase.getInstance().getReference("chat_rooms");
+        databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String selectedChatRoom = chatRooms[position];
-                Intent intent = new Intent(ChatListActivity.this, ChatActivity.class);
-                intent.putExtra("chatRoom", selectedChatRoom);
-                startActivity(intent);
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                chatRoomList.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    // 채팅방 이름 또는 정보를 가져와 chatRoomList에 추가
+                    String roomName = snapshot.getKey();
+                    chatRoomList.add(roomName);
+                }
+                chatRoomListAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // 처리 중 에러 발생 시 예외 처리
             }
         });
 
+        // 채팅방 목록에서 항목을 클릭하면 해당 채팅방으로 이동
+        chatListView.setOnItemClickListener((parent, view, position, id) -> {
+            String selectedRoomName = chatRoomList.get(position);
+            Intent intent = new Intent(ChatListActivity.this, ChatActivity.class);
+            intent.putExtra("roomName", selectedRoomName);
+            startActivity(intent);
+        });
         // 팔아요 버튼 클릭 시
         Button sellButton = findViewById(R.id.sellButton);
         sellButton.setOnClickListener(new View.OnClickListener() {
@@ -47,7 +71,6 @@ public class ChatListActivity extends AppCompatActivity {
                 startActivity(new Intent(ChatListActivity.this, MainActivity.class));
             }
         });
-
 
         // 내 정보 버튼 클릭 시
         Button myProfileButton = findViewById(R.id.myProfileButton);
