@@ -1,6 +1,6 @@
 package com.pttmarket.potatomarket;
 
-public class User {
+public class User {//게시판에 사용될 리얼타임 db
     private String profile;
     private String id;
     private String product;

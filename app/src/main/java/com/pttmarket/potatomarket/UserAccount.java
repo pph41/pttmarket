@@ -1,12 +1,11 @@
 package com.pttmarket.potatomarket;
 
-public class UserAccount {
+public class UserAccount {//계정 회원가입, 로그인에 사용되는 리얼타임 db
 
    public UserAccount(){
    }
-
-   public String getIdToken() { return idToken; }
-
+    // id토큰 = id number 역할
+    public String getIdToken() { return idToken; }
     public  void setIdToken(String idToken){
        this.idToken = idToken;
     }
@@ -19,5 +18,9 @@ public class UserAccount {
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
     private String password;
+
+    public String getNickname() { return nickname; }
+    public void setNickname(String nickname) { this.nickname = nickname; }
+    private String nickname;
 
 }

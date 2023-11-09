@@ -22,7 +22,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private FirebaseAuth mFirebaseAuth;
     private DatabaseReference mDatabaseRef; //리얼타임 db
-    private EditText mEtEmail, mEtPwd;
+    private EditText mEtEmail, mEtPwd, mEtNname; //가입.xml input값
     private Button mBtnRegister;
 
     @Override
@@ -33,17 +33,20 @@ public class RegisterActivity extends AppCompatActivity {
         mFirebaseAuth = FirebaseAuth.getInstance();
         mDatabaseRef = FirebaseDatabase.getInstance().getReference();
 
+        // xml의 input들을 변수로 받아온다.
         mEtEmail = findViewById(R.id.et_email);
         mEtPwd = findViewById(R.id.et_pwd);
+        mEtNname = findViewById(R.id.et_nname);
         mBtnRegister = findViewById(R.id.btn_register);
 
+        //회원가입버튼 이벤트 리스너
         mBtnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                // 회원가입 처리
+                // 회원가입 처리, 학교이메일 강제 도메인 처리
                 String strEmail = mEtEmail.getText().toString()+"@gwnu.ac.kr";
                 String strPwd = mEtPwd.getText().toString();
-
+                String strNname = mEtNname.getText().toString();
                 //파베 인증
                 mFirebaseAuth.createUserWithEmailAndPassword(strEmail, strPwd).addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
                    @Override
@@ -54,6 +57,7 @@ public class RegisterActivity extends AppCompatActivity {
                            account.setIdToken(firebaseUser.getUid());
                            account.setEmailId(firebaseUser.getEmail());
                            account.setPassword(strPwd);
+                           account.setNickname(strNname);
 
                            //db에 계정등록, Uid 링크
                            mDatabaseRef.child("UserAccount").child(firebaseUser.getUid()).setValue(account);
