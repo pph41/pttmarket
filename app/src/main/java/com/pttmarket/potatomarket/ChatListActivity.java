@@ -2,7 +2,6 @@ package com.pttmarket.potatomarket;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -43,7 +42,6 @@ public class ChatListActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 chatRoomList.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    // 채팅방 이름 또는 정보를 가져와 chatRoomList에 추가
                     String roomName = snapshot.getKey();
                     chatRoomList.add(roomName);
                 }
@@ -56,6 +54,9 @@ public class ChatListActivity extends AppCompatActivity {
             }
         });
 
+        // 임의의 채팅방 및 메시지 생성
+        createChatWithUser("1@gwnu_ac_kr", "이", "2@gwnu_ac_kr", "2");
+
         // 채팅방 목록에서 항목을 클릭하면 해당 채팅방으로 이동
         chatListView.setOnItemClickListener((parent, view, position, id) -> {
             String selectedRoomName = chatRoomList.get(position);
@@ -63,6 +64,7 @@ public class ChatListActivity extends AppCompatActivity {
             intent.putExtra("roomName", selectedRoomName);
             startActivity(intent);
         });
+
         // 팔아요 버튼 클릭 시
         Button sellButton = findViewById(R.id.sellButton);
         sellButton.setOnClickListener(new View.OnClickListener() {
@@ -77,11 +79,57 @@ public class ChatListActivity extends AppCompatActivity {
         myProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // 내 정보 버튼을 누를 때의 동작을 정의합니다.
-                // 예: 현재 액티비티에서 사용자 프로필 화면으로 이동
-                // 아래 코드를 변경하여 다른 액티비티로 이동하세요.
                 startActivity(new Intent(ChatListActivity.this, UserProfileActivity.class));
             }
         });
     }
+
+    // 채팅방 생성 부분 수정
+    private void createChatWithUser(String userEmail1, String userNickname1, String userEmail2, String userNickname2) {
+        String roomName = getRoomName(userNickname1, userNickname2);
+
+        // 이미 존재하는 채팅방인지 확인
+        if (!chatRoomList.contains(roomName)) {
+            // 채팅방이 존재하지 않으면 생성
+            chatRoomList.add(roomName);
+            chatRoomListAdapter.notifyDataSetChanged();
+
+            // 메시지 전송
+            DatabaseReference chatRef = FirebaseDatabase.getInstance().getReference("chat_rooms").child(roomName).child("messages").push();
+            chatRef.child("sender").setValue(userNickname2); // 2가 보낸 것으로 가정
+            chatRef.child("message").setValue("안녕하세요."); // 2가 보낸 메시지로 가정
+
+            // 상대방의 UID를 가져오기
+            String otherUserId = getOtherUserId(roomName, mAuth.getCurrentUser().getUid());
+
+            // 채팅방 목록에서 항목을 클릭하면 해당 채팅방으로 이동
+            chatListView.setOnItemClickListener((parent, view, position, id) -> {
+                String selectedRoomName = chatRoomList.get(position);
+                Intent intent = new Intent(ChatListActivity.this, ChatActivity.class);
+                intent.putExtra("roomName", selectedRoomName);
+                // 상대방의 닉네임과 UID를 함께 전달
+                intent.putExtra("otherUserId", otherUserId);
+                startActivity(intent);
+            });
+        }
+    }
+
+    // 채팅방 이름에서 상대방 UID 가져오기
+    private String getOtherUserId(String roomName, String myUserId) {
+        String[] userIDs = roomName.split("_");
+        for (String userID : userIDs) {
+            if (!userID.equals(myUserId)) {
+                return userID;
+            }
+        }
+        return "";
+    }
+
+    // 채팅방 이름 생성 메서드 수정
+    private String getRoomName(String userNickname1, String userNickname2) {
+        String[] nicknames = {userNickname1, userNickname2};
+        java.util.Arrays.sort(nicknames);
+        return nicknames[0] + "_" + nicknames[1];
+    }
+
 }

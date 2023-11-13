@@ -56,15 +56,19 @@
 
         <!-- 메시지 입력 상자와 메시지 전송 버튼을 포함하는 레이아웃 -->
 
-        <ListView
-            android:id="@+id/chatListView"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/chatRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:divider="@android:color/transparent"
             android:dividerHeight="8dp"
             android:padding="8dp"
-            android:scrollbars="vertical" />
+            android:scrollbars="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/headerLayout" />
 
         <LinearLayout
             android:layout_width="match_parent"

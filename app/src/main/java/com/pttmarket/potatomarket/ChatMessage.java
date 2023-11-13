@@ -1,23 +1,35 @@
 package com.pttmarket.potatomarket;
 
+
 public class ChatMessage {
-    private String message;
-    private String username;
+    private String messageText;
+    private String senderName;
+    private String imageUrl;
 
     public ChatMessage() {
-        // Default constructor required for Firebase
+        // Firebase에서 필요한 기본 생성자
     }
 
-    public ChatMessage(String message, String username) {
-        this.message = message;
-        this.username = username;
+    public ChatMessage(String messageText, String senderName) {
+        this.messageText = messageText;
+        this.senderName = senderName;
     }
 
-    public String getMessage() {
-        return message;
+    public ChatMessage(String messageText, String senderName, String imageUrl) {
+        this.messageText = messageText;
+        this.senderName = senderName;
+        this.imageUrl = imageUrl;
     }
 
-    public String getUsername() {
-        return username;
+    public String getMessageText() {
+        return messageText;
+    }
+
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
     }
 }
