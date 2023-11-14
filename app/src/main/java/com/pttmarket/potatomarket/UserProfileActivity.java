@@ -19,7 +19,7 @@ public class UserProfileActivity extends AppCompatActivity {
         sellButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(UserProfileActivity.this, MainActivity.class));
+                startActivity(new Intent(UserProfileActivity.this, boardActivity.class));
             }
         });
 

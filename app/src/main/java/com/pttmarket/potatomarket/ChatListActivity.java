@@ -70,7 +70,7 @@ public class ChatListActivity extends AppCompatActivity {
         sellButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(ChatListActivity.this, MainActivity.class));
+                startActivity(new Intent(ChatListActivity.this, boardActivity.class));
             }
         });
 

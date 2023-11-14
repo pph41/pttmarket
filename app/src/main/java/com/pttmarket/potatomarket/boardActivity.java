@@ -76,6 +76,23 @@ public class boardActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-    }
+        Button chatButton = (Button) findViewById(R.id.chatButton);
 
+        chatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), ChatListActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button myProfileButton = (Button) findViewById(R.id.myProfileButton);
+        myProfileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), UserProfileActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
 }

@@ -81,9 +81,16 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".new_post"/>
-        <activity android:name=".boardActivity"/>
+        <activity
+            android:name=".new_post"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AppCompat"
+            android:exported="true"/>
+        <activity
+            android:name=".boardActivity"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AppCompat"
+            android:exported="true"/>
     </application>
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
