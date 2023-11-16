@@ -114,7 +114,10 @@ public class new_post extends AppCompatActivity {
                 fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        User user = new User(uri.toString(),input_product.getText().toString(),input_price.getText().toString(),null);
+                        FirebaseUser FBuser = FirebaseAuth.getInstance().getCurrentUser();
+                        String name = FBuser.getEmail();
+
+                        User user = new User(uri.toString(),input_product.getText().toString(),input_price.getText().toString(),name);
                         String modelld = root.push().getKey();
                         root.child(modelld).setValue(user);
 
