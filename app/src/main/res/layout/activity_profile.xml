@@ -45,6 +45,10 @@
                 android:background="@android:color/transparent"
                 android:text="내 시간표"
                 android:layout_marginTop="16dp" />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:id="@+id/schedule"/>
         </LinearLayout>
 
     </LinearLayout>
