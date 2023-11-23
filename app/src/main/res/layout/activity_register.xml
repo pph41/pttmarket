@@ -32,6 +32,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_email" />
 
+    <EditText
+        android:id="@+id/et_nname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="닉네임을 입력해주세요."
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_pwd" />
 
     <Button
         android:id="@+id/btn_register"
@@ -41,7 +52,7 @@
         android:text="가입 완료"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_email" />
+        app:layout_constraintTop_toBottomOf="@+id/et_pwd" />
 
     <TextView
         android:id="@+id/txt_emailform"
@@ -62,7 +73,7 @@
         android:text="꼭 본인의 학교 웹메일을 사용해 주세요"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_pwd" />
+        app:layout_constraintTop_toBottomOf="@+id/et_nname" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
