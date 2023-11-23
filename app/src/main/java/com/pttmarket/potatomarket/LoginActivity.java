@@ -24,6 +24,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mEtEmail, mEtPwd;
     private Button mBtnRegister, mBtnLogin;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +38,11 @@ public class LoginActivity extends AppCompatActivity {
         mBtnRegister = findViewById(R.id.btn_register);
         mBtnLogin = findViewById(R.id.btn_login);
 
+        if (mFirebaseAuth.getCurrentUser() != null) {// 로그인 이력이 있는 경우
+            Intent intent = new Intent(LoginActivity.this, boardActivity.class);
+            startActivity(intent);
+            finish();
+        }
         // 액티비티 실행부
         mBtnLogin.setOnClickListener(new View.OnClickListener(){
             @Override
