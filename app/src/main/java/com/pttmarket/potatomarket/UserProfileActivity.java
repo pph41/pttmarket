@@ -37,8 +37,9 @@ public class UserProfileActivity extends AppCompatActivity {
     private ImageView imageView;
     private FirebaseStorage storage;
     private String email;
-    private  final int GALLERY_CODE = 10;
+    private final int GALLERY_CODE = 10;
     private final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,13 +53,13 @@ public class UserProfileActivity extends AppCompatActivity {
 
         String email = currentUser.getEmail();
         int idx = email.indexOf("@");
-        String name = email.substring(0,idx);
+        String name = email.substring(0, idx);
         my_id.setText(name);
         my_email.setText(email);
 
         FirebaseStorage storage_schedule = FirebaseStorage.getInstance();
         StorageReference storageRef = storage_schedule.getReference();
-        storageRef.child(""+email).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        storageRef.child("" + email).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
                 Glide.with(getApplicationContext())
@@ -68,7 +69,7 @@ public class UserProfileActivity extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext(),"시간표를 등록해주세요!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "시간표를 등록해주세요!", Toast.LENGTH_SHORT).show();
             }
         });
         upload_schedule.setOnClickListener(new View.OnClickListener() {
@@ -76,7 +77,7 @@ public class UserProfileActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
-                startActivityForResult(intent,GALLERY_CODE);
+                startActivityForResult(intent, GALLERY_CODE);
             }
         });
 
@@ -100,14 +101,34 @@ public class UserProfileActivity extends AppCompatActivity {
         });
 
     }
+
     @Override
-    protected void onActivityResult(int requsetCode,final int resultCode,final Intent data) {
-        super.onActivityResult(requsetCode, resultCode, data);
-        if (requsetCode == GALLERY_CODE){
-            Uri file = data.getData();
-            StorageReference storageRef = storage.getReference();
-            StorageReference riversRef = storageRef.child(email);
-            UploadTask uploadTask = riversRef.putFile(file);
+    protected void onActivityResult(int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == GALLERY_CODE) {
+            if (data != null && data.getData() != null) {
+                Uri file = data.getData();
+                StorageReference storageRef = storage.getReference();
+                StorageReference riversRef = storageRef.child(email);
+
+                UploadTask uploadTask = riversRef.putFile(file);
+                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // 업로드 성공
+                        Toast.makeText(UserProfileActivity.this, "이미지 업로드 성공", Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // 업로드 실패
+                        Toast.makeText(UserProfileActivity.this, "이미지 업로드 실패", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                Toast.makeText(this, "이미지를 선택하지 않았습니다.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
+
 }

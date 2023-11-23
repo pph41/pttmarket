@@ -23,10 +23,8 @@
         <Button
             android:id="@+id/backButton"
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:layout_marginEnd="8dp"
-            android:text="←"
-            android:textSize="24sp" />
+            android:layout_height="wrap_content"
+            android:text="←"/>
 
         <!-- 채팅 상대의 유저 이름 -->
         <TextView
@@ -35,7 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="상대 닉네임"
+            android:text=""
             android:textColor="@android:color/black"
             android:textSize="18sp" />
 

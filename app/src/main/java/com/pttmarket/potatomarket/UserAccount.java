@@ -1,12 +1,13 @@
 package com.pttmarket.potatomarket;
+import java.io.Serializable;
 
-public class UserAccount {//계정 회원가입, 로그인에 사용되는 리얼타임 db
+public class UserAccount implements Serializable {//계정 회원가입, 로그인에 사용되는 리얼타임 db
 
    public UserAccount(){}
     // id토큰 = id number 역할
     public String getIdToken() { return idToken; }
     public  void setIdToken(String idToken){
-       this.idToken = idToken;
+        this.idToken = idToken;
     }
     private String idToken;
 

@@ -37,7 +37,7 @@ public class RegisterActivity extends AppCompatActivity {
         // xml의 input들을 변수로 받아온다.
         mEtEmail = findViewById(R.id.et_email);
         mEtPwd = findViewById(R.id.et_pwd);
-        mEtNname = findViewById(R.id.et_nname);
+        //mEtNname = findViewById(R.id.et_nname);
         mBtnRegister = findViewById(R.id.btn_register);
 
         //회원가입버튼 이벤트 리스너
@@ -47,7 +47,7 @@ public class RegisterActivity extends AppCompatActivity {
                 // 회원가입 처리, 학교이메일 강제 도메인 처리
                 String strEmail = mEtEmail.getText().toString();//+"@gwnu.ac.kr";
                 String strPwd = mEtPwd.getText().toString();
-                String strNname = mEtNname.getText().toString();
+                //String strNname = mEtNname.getText().toString();
                 //파베 인증
 
                 mFirebaseAuth.createUserWithEmailAndPassword(strEmail, strPwd).addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
@@ -59,7 +59,7 @@ public class RegisterActivity extends AppCompatActivity {
                            account.setIdToken(firebaseUser.getUid());
                            account.setEmailId(firebaseUser.getEmail());
                            account.setPassword(strPwd);
-                           account.setNickname(strNname);
+                           //account.setNickname(strNname);
                            //.se
                            //db에 계정등록, Uid 링크
 

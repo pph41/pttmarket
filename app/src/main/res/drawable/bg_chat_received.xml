@@ -1,4 +1,0 @@
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#ECEFF1"/> <!-- 상대방 채팅 배경색 -->
-    <corners android:radius="8dp"/>
-</shape>

@@ -1,7 +1,6 @@
 package com.pttmarket.potatomarket;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,110 +10,143 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
-import com.bumptech.glide.Glide;
+import java.util.Locale;
 
-public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder> {
-    // Add two constants for message types
-    private static final int VIEW_TYPE_MESSAGE_SENT = 1;
-    private static final int VIEW_TYPE_MESSAGE_RECEIVED = 2;
+public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private static final int VIEW_TYPE_MY_MESSAGE = 1;
+    private static final int VIEW_TYPE_OTHER_MESSAGE = 2;
 
     private Context context;
-    private List<ChatMessage> messages;
-    private FirebaseAuth mAuth;
-    private String currentUserId;
+    private ArrayList<ChatMessage> messageList;
+    private String currentUserEmail;
 
-    public ChatAdapter(Context context, List<ChatMessage> messages, FirebaseAuth auth, String currentUserId) {
-        this.context = context;
-        this.messages = messages;
-        this.mAuth = auth;
-        this.currentUserId = currentUserId;
+    public ChatAdapter(ArrayList<ChatMessage> messageList, String currentUserEmail) {
+        this.messageList = messageList;
+        this.currentUserEmail = currentUserEmail;
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
-        ChatMessage chatMessage = messages.get(position);
-        if (chatMessage != null && holder != null) {
-            if (holder.usernameTextView != null && holder.messageTextView != null) {
-                holder.usernameTextView.setText(chatMessage.getSenderName());
-
-                // Check if the message is a text message or an image message
-                if (chatMessage.getImageUrl() != null && !chatMessage.getImageUrl().isEmpty()) {
-                    // Image message
-                    holder.messageTextView.setVisibility(View.GONE);
-                    holder.imageMessageView.setVisibility(View.VISIBLE);
-                    Glide.with(context)
-                            .load(chatMessage.getImageUrl())
-                            .into(holder.imageMessageView);
-                } else {
-                    // Text message
-                    holder.messageTextView.setVisibility(View.VISIBLE);
-                    holder.imageMessageView.setVisibility(View.GONE);
-                    holder.messageTextView.setText(chatMessage.getMessageText());
-                }
-            } else {
-                Log.e("ChatAdapter", "TextViews are null in onBindViewHolder");
-            }
-        } else {
-            Log.e("ChatAdapter", "chatMessage or holder is null in onBindViewHolder");
-        }
+    public void addMessage(ChatMessage message) {
+        messageList.add(message);
+        notifyDataSetChanged(); // Notify the adapter that the data set has changed
     }
 
     @NonNull
     @Override
-    public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
-        if (viewType == VIEW_TYPE_MESSAGE_SENT) {
-            view = LayoutInflater.from(context).inflate(R.layout.item_chat_sent, parent, false);
+        if (viewType == VIEW_TYPE_MY_MESSAGE) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_my_message, parent, false);
+            return new MyMessageViewHolder(view);
         } else {
-            view = LayoutInflater.from(context).inflate(R.layout.item_chat_received, parent, false);
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_other_message, parent, false);
+            return new OtherMessageViewHolder(view);
         }
-
-        TextView usernameTextView = view.findViewById(R.id.usernameTextView);
-        TextView messageTextView = view.findViewById(R.id.messageTextView);
-        ImageView imageMessageView = view.findViewById(R.id.imageMessageView); // Add ImageView
-
-        return new ChatViewHolder(view, usernameTextView, messageTextView, imageMessageView);
     }
-
 
     @Override
-    public int getItemCount() {
-        return messages.size();
-    }
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        ChatMessage message = messageList.get(position);
 
+        if (holder instanceof MyMessageViewHolder) {
+            ((MyMessageViewHolder) holder).bind(message);
+        } else if (holder instanceof OtherMessageViewHolder) {
+            ((OtherMessageViewHolder) holder).bind(message);
+        }
+    }
 
     @Override
     public int getItemViewType(int position) {
-        ChatMessage chatMessage = messages.get(position);
+        ChatMessage message = messageList.get(position);
+        return message.getSenderId().equals(currentUserEmail) ? VIEW_TYPE_MY_MESSAGE : VIEW_TYPE_OTHER_MESSAGE;
+    }
 
-        if (chatMessage.getSenderName() != null && chatMessage.getSenderName().equals(currentUserId)) {
-            // Sent message
-            return VIEW_TYPE_MESSAGE_SENT;
-        } else {
-            // Received message
-            return VIEW_TYPE_MESSAGE_RECEIVED;
+    @Override
+    public int getItemCount() {
+        return messageList.size();
+    }
+
+    // timestamp를 시간 문자열로 변환하는 메서드
+    private static String convertTimestampToTime(long timestamp) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timestamp);
+
+        // 시간과 분을 가져와서 문자열로 반환
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+
+        return String.format(Locale.getDefault(), "%02d:%02d", hour, minute);
+    }
+
+    // 나의 메시지를 표시하는 ViewHolder
+    private static class MyMessageViewHolder extends RecyclerView.ViewHolder {
+        TextView messageTextView;
+        ImageView messageImageView;
+        TextView nicknameTextView;
+        TextView timeTextView;
+
+        MyMessageViewHolder(View itemView) {
+            super(itemView);
+            messageTextView = itemView.findViewById(R.id.my_message_text_view);
+            messageImageView = itemView.findViewById(R.id.my_message_image_view);
+            nicknameTextView = itemView.findViewById(R.id.my_message_nickname_text_view);
+            timeTextView = itemView.findViewById(R.id.my_message_time_text_view);  // 추가된 부분: 시간 표시 TextView
+        }
+
+        void bind(ChatMessage message) {
+            if (message.getImageUrl() != null) {
+                Glide.with(itemView.getContext())
+                        .load(message.getImageUrl())
+                        .into(messageImageView);
+                messageTextView.setVisibility(View.GONE);
+            } else {
+                messageTextView.setText(message.getMessage());
+            }
+            nicknameTextView.setText(message.getSenderNickname());
+
+            // 시간 표시
+            long timestamp = message.getTimestamp();
+            String time = convertTimestampToTime(timestamp);
+            timeTextView.setText(time);
         }
     }
 
-    public void add(ChatMessage message) {
-        messages.add(message);
-        notifyItemInserted(messages.size() - 1);
-    }
-
-    public static class ChatViewHolder extends RecyclerView.ViewHolder {
-        TextView usernameTextView;
+    // 상대방의 메시지를 표시하는 ViewHolder
+    private static class OtherMessageViewHolder extends RecyclerView.ViewHolder {
         TextView messageTextView;
-        ImageView imageMessageView; // Add ImageView
+        ImageView messageImageView;
+        TextView nicknameTextView;
+        TextView timeTextView;
 
-        public ChatViewHolder(@NonNull View itemView, TextView usernameTextView,
-                              TextView messageTextView, ImageView imageMessageView) {
+        OtherMessageViewHolder(View itemView) {
             super(itemView);
-            this.usernameTextView = usernameTextView;
-            this.messageTextView = messageTextView;
-            this.imageMessageView = imageMessageView;
+            messageTextView = itemView.findViewById(R.id.other_message_text_view);
+            messageImageView = itemView.findViewById(R.id.other_message_image_view);
+            nicknameTextView = itemView.findViewById(R.id.other_message_nickname_text_view);
+            timeTextView = itemView.findViewById(R.id.other_message_time_text_view);  // 추가된 부분: 시간 표시 TextView
+        }
+
+        void bind(ChatMessage message) {
+            if (message.getImageUrl() != null) {
+                Glide.with(itemView.getContext())
+                        .load(message.getImageUrl())
+                        .into(messageImageView);
+                messageTextView.setVisibility(View.GONE);
+            } else {
+                messageTextView.setText(message.getMessage());
+            }
+            nicknameTextView.setText(message.getSenderNickname());
+
+            // 시간 표시
+            long timestamp = message.getTimestamp();
+            String time = convertTimestampToTime(timestamp);
+            timeTextView.setText(time);
         }
     }
 }

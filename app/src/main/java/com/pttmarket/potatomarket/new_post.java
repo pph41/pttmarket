@@ -89,7 +89,7 @@ public class new_post extends AppCompatActivity {
                 if (imageUri != null){
                     uploadTOFirebase(imageUri);
                 } else {
-                    Toast.makeText(new_post.this,"사진을 선택해주세요",Toast.LENGTH_SHORT);
+                    Toast.makeText(new_post.this, "사진을 선택해주세요", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -119,7 +119,8 @@ public class new_post extends AppCompatActivity {
                         int idx = email.indexOf("@");
                         String name = email.substring(0,idx);
 
-                        User user = new User(uri.toString(),input_product.getText().toString(),input_price.getText().toString(),name);
+                        User user = new User(uri.toString(), input_product.getText().toString(), input_price.getText().toString(), name, currentUser.getEmail());
+                        //user.setEmailid(currentUser.getEmail()); // 추가
                         String modelld = root.push().getKey();
                         root.child(modelld).setValue(user);
 

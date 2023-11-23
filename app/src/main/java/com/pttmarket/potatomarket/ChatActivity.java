@@ -12,15 +12,26 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.google.firebase.database.ValueEventListener;
+
+
 import android.provider.MediaStore;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -35,6 +46,11 @@ public class ChatActivity extends AppCompatActivity {
     private Button attachButton;
     private LinearLayout attachmentButtonsLayout;
     private static final int PICK_IMAGE_REQUEST = 1;
+    private String postAuthorEmail;
+    private String currentUserEmail;
+    private FirebaseStorage storage;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,44 +64,42 @@ public class ChatActivity extends AppCompatActivity {
         attachButton = findViewById(R.id.attachButton);
         attachmentButtonsLayout = findViewById(R.id.attachmentButtonsLayout);
 
-        // 1@gwnu_ac_kr로 로그인한 것으로 가정
-        String currentUserEmail = "1@gwnu.ac.kr";
-        String otherUserEmail = "2@gwnu.ac.kr";
-        String currentUserId = currentUserEmail.replace("@", "_").replace(".", "_");
-        String otherUserId = otherUserEmail.replace("@", "_").replace(".", "_");
-
-        // 채팅방 이름 생성
-        roomName = getRoomName(currentUserId, otherUserId);
-
-        // ChatActivity에서의 생성 부분
-        chatAdapter = new ChatAdapter(this, new ArrayList<>(), mAuth, currentUserId);
-
-        chatRecyclerView.setAdapter(chatAdapter);
-        chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        // 채팅방 이름 생성(tv_product의 정보를 가져오기)
+        Intent intent = getIntent();
+        postAuthorEmail = intent.getStringExtra("postAuthorEmail");
+        currentUserEmail = intent.getStringExtra("currentUserEmail");
+        roomName = intent.getStringExtra("roomName"); // 수정
 
         // Firebase Realtime Database에서 채팅 메시지를 가져오는 코드
-        databaseReference = FirebaseDatabase.getInstance().getReference("chat_rooms").child(roomName).child("messages");
+        databaseReference = FirebaseDatabase.getInstance().getReference("ChatRooms").child(roomName);
+        ArrayList<ChatMessage> messageList = new ArrayList<>();
+        chatAdapter = new ChatAdapter(messageList, mAuth.getCurrentUser().getEmail());
+        chatRecyclerView.setAdapter(chatAdapter);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        chatRecyclerView.setLayoutManager(layoutManager);
+
         databaseReference.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String s) {
-                ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-                chatAdapter.add(chatMessage);
+            public void onChildAdded(@NonNull DataSnapshot snapshot, String previousChildName) {
+                ChatMessage message = snapshot.getValue(ChatMessage.class);
+                chatAdapter.addMessage(message);
+                chatRecyclerView.scrollToPosition(chatAdapter.getItemCount() - 1);
             }
 
             @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, String s) {
+            public void onChildChanged(@NonNull DataSnapshot snapshot, String previousChildName) {
             }
 
             @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
             }
 
             @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, String s) {
+            public void onChildMoved(@NonNull DataSnapshot snapshot, String previousChildName) {
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError error) {
             }
         });
 
@@ -117,6 +131,32 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        // 시간표 공유 버튼 클릭 시
+        storage = FirebaseStorage.getInstance();
+        Button shareTimetableButton = findViewById(R.id.shareTimetableButton);
+        shareTimetableButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 시간표 이미지의 다운로드 URL을 가져오는 코드
+                StorageReference storageRef = storage.getReference();
+                StorageReference timetableRef = storageRef.child(currentUserEmail);
+
+                timetableRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        // 시간표 이미지의 다운로드 URL을 가져오는 데 성공한 경우
+                        sendImageMessage(uri);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // 시간표 이미지의 다운로드 URL을 가져오는 데 실패한 경우 또는 시간표 이미지가 없는 경우
+                        Toast.makeText(getApplicationContext(), "시간표 이미지를 불러오는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
         // 팝업 창으로 신고 이유 선택
         Button reportButton = findViewById(R.id.reportButton);
         reportButton.setOnClickListener(new View.OnClickListener() {
@@ -145,11 +185,17 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
-    // sendMessage 메서드 수정
     private void sendMessage(String messageText) {
-        DatabaseReference messagesRef = databaseReference.push();
-        ChatMessage chatMessage = new ChatMessage(messageText, mAuth.getCurrentUser().getDisplayName(), "");
-        messagesRef.setValue(chatMessage);
+        // 채팅 메시지를 Firebase Realtime Database에 추가
+        String messageId = databaseReference.push().getKey();
+        String senderId = mAuth.getCurrentUser().getEmail();
+        long timestamp = System.currentTimeMillis();
+
+        // For text messages, imageUrl can be set to null
+        ChatMessage message = new ChatMessage(messageId, senderId, roomName, messageText, timestamp, null);
+        databaseReference.child(messageId).setValue(message);
+
+        // 메시지 입력창 비우기
         messageEditText.setText("");
     }
 
@@ -171,21 +217,21 @@ public class ChatActivity extends AppCompatActivity {
 
     // 이미지 메시지 전송
     private void sendImageMessage(Uri imageUri) {
+        // 이미지를 전송하는 코드
+        // 채팅 메시지를 Firebase Realtime Database에 추가
+        String messageId = databaseReference.push().getKey();
+        String senderId = mAuth.getCurrentUser().getEmail();
+        long timestamp = System.currentTimeMillis();
+
         DatabaseReference messagesRef = databaseReference.push();
-        ChatMessage chatMessage = new ChatMessage("", mAuth.getCurrentUser().getDisplayName(), imageUri.toString());
+        ChatMessage chatMessage = new ChatMessage(messageId, senderId, roomName, null, timestamp, imageUri.toString());
         messagesRef.setValue(chatMessage);
     }
 
     // 팝업 창으로 신고 이유 선택
     private void showReportDialog() {
-        DialogReport dialog = new DialogReport(this);
+        DialogReport dialog = new DialogReport(ChatActivity.this, roomName, currentUserEmail);
         dialog.show();
     }
 
-    // 채팅방 이름 생성 메서드 수정
-    private String getRoomName(String user1, String user2) {
-        String[] users = {user1, user2};
-        java.util.Arrays.sort(users);
-        return users[0] + "_" + users[1];
-    }
 }
