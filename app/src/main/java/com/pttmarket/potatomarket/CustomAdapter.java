@@ -1,6 +1,7 @@
 package com.pttmarket.potatomarket;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +44,13 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
         holder.tv_id.setText(arrayList.get(position).getId());
         holder.tv_product.setText(arrayList.get(position).getProduct());
         holder.tv_price.setText(arrayList.get(position).getPrice());
+        holder.chat_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), ChatListActivity.class);
+                view.getContext().startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -56,12 +64,14 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
         TextView tv_id;
         TextView tv_product;
         TextView tv_price;
+        Button chat_btn;
         public CustomViewHolder(@NonNull View itemView) {
             super(itemView);
             this.profile = itemView.findViewById(R.id.profile);
             this.tv_id = itemView.findViewById(R.id.tv_id);
             this.tv_product = itemView.findViewById(R.id.tv_product);
             this.tv_price = itemView.findViewById(R.id.tv_price);
+            this.chat_btn = itemView.findViewById(R.id.chat_btn);
         }
     }
 }

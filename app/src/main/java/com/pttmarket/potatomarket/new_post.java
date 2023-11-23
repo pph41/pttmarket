@@ -53,7 +53,8 @@ public class new_post extends AppCompatActivity {
     //파베 db연결
     private final DatabaseReference root = FirebaseDatabase.getInstance().getReference("User");
     private final StorageReference reference = FirebaseStorage.getInstance().getReference();
-
+    private final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("UserAccount");
+    private final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     private Uri imageUri;
 
     //연결준비 끝
@@ -114,8 +115,9 @@ public class new_post extends AppCompatActivity {
                 fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        FirebaseUser FBuser = FirebaseAuth.getInstance().getCurrentUser();
-                        String name = FBuser.getEmail();
+                        String email = currentUser.getEmail();
+                        int idx = email.indexOf("@");
+                        String name = email.substring(0,idx);
 
                         User user = new User(uri.toString(),input_product.getText().toString(),input_price.getText().toString(),name);
                         String modelld = root.push().getKey();

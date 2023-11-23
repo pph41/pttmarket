@@ -2,8 +2,7 @@ package com.pttmarket.potatomarket;
 
 public class UserAccount {//계정 회원가입, 로그인에 사용되는 리얼타임 db
 
-   public UserAccount(){
-   }
+   public UserAccount(){}
     // id토큰 = id number 역할
     public String getIdToken() { return idToken; }
     public  void setIdToken(String idToken){
