@@ -65,5 +65,15 @@
         app:layout_constraintStart_toEndOf="@+id/et_email"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/txt_inforegi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:text="꼭 본인의 학교 웹메일을 사용해 주세요"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_nname" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

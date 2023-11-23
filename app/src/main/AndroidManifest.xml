@@ -23,6 +23,11 @@
             android:theme="@style/Theme.AppCompat"/>
 
         <activity
+            android:name=".EmailAuthActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat"/>
+
+        <activity
             android:name=".LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat">
