@@ -47,6 +47,14 @@ public class UserProfileActivity extends AppCompatActivity {
         imageView = findViewById(R.id.schedule);
         Button upload_schedule = findViewById(R.id.myScheduleButton);
         email = currentUser.getEmail();
+        TextView my_id = findViewById(R.id.my_id);
+        TextView my_email = findViewById(R.id.my_email);
+
+        String email = currentUser.getEmail();
+        int idx = email.indexOf("@");
+        String name = email.substring(0,idx);
+        my_id.setText(name);
+        my_email.setText(email);
 
         FirebaseStorage storage_schedule = FirebaseStorage.getInstance();
         StorageReference storageRef = storage_schedule.getReference();
