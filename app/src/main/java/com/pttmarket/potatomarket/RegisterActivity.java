@@ -66,8 +66,12 @@ public class RegisterActivity extends AppCompatActivity {
                            mDatabaseRef.child("UserAccount").child(firebaseUser.getUid()).setValue(account);
 
                            // 작동 시 메시지 출력
+                           /* 이메일 인증 구현 부분, 추후 학교 이메일로 인증가능 확인 후 추가 예정
                            Toast.makeText(RegisterActivity.this, "이메일 인증링크를 확인해 주세요", Toast.LENGTH_SHORT).show();
                            Intent intent = new Intent(RegisterActivity.this, EmailAuthActivity.class);
+                            */
+                           Toast.makeText(RegisterActivity.this, "회원가입 완료", Toast.LENGTH_SHORT).show();
+                           Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                            startActivity(intent);
 
                        }else {
