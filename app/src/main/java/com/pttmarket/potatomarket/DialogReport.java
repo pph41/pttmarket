@@ -1,99 +1,77 @@
 package com.pttmarket.potatomarket;
 
 import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 
 import androidx.annotation.NonNull;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.core.Context;
-import com.google.firebase.database.ValueEventListener;
 
-import com.pttmarket.potatomarket.R;
+public class DialogReport extends Dialog {
 
-public class DialogReport extends android.app.Dialog {
-
-    private CheckBox checkBox1, checkBox2;
+    private CheckBox checkBox1, checkBox2, checkBox3, checkBox4, checkBox5;
     private Button submitButton;
-    private DatabaseReference chatUsersRef; // 채팅방 참여자 정보를 저장하는 노드의 참조
+    private DatabaseReference chatUsersRef;
+    private String roomName;
 
-    public DialogReport(android.content.Context context, String roomName, String currentUserEmail) {
+    public DialogReport(@NonNull Context context, String roomName, String reporterId) {
         super(context);
         setContentView(R.layout.dialog_report);
 
         setTitle("신고하기");
 
+        this.roomName = roomName;
+
         checkBox1 = findViewById(R.id.checkBox1);
         checkBox2 = findViewById(R.id.checkBox2);
+        checkBox3 = findViewById(R.id.checkBox3);
+        checkBox4 = findViewById(R.id.checkBox4);
+        checkBox5 = findViewById(R.id.checkBox5);
 
         submitButton = findViewById(R.id.submitButton);
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handle submit button click
-                reportUser(roomName, currentUserEmail); // 상대방 유저를 신고
+                sendEmail(roomName, reporterId);
                 dismiss();
             }
         });
 
-        chatUsersRef = FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(roomName).child("users");
+        chatUsersRef = FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(roomName).child("senderId");
     }
 
-    private void reportUser(String roomName, String currentUserEmail) {
-        // 채팅방에 참여한 사용자 중에서 자신의 이메일을 제외한 다른 사용자를 찾아 신고 처리
-        chatUsersRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot userSnapshot : snapshot.getChildren()) {
-                    String userEmail = userSnapshot.getValue(String.class);
-                    if (userEmail != null && !userEmail.equals(currentUserEmail)) {
-                        // 다른 사용자를 찾았으면 해당 사용자를 신고 처리
-                        performReport(userEmail);
-                    }
-                }
-            }
+    private void sendEmail(String roomName, String reporterId) {
+        String emailSubject = "감자마켓 유저를 신고합니다";
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // 에러 처리
-            }
-        });
-    }
+        // 내용
+        StringBuilder emailBodyBuilder = new StringBuilder();
+        emailBodyBuilder.append("신고할 닉네임: ").append("\n");
+        emailBodyBuilder.append("채팅방 이름: ").append(roomName).append("\n");
+        if (checkBox1.isChecked()) {
+        emailBodyBuilder.append("비매너 사용자에요").append("\n");}
+        if (checkBox2.isChecked()) {
+        emailBodyBuilder.append("잠수를 탔어요").append("\n");}
+        if (checkBox3.isChecked()) {
+        emailBodyBuilder.append("사기 당했어요").append("\n");}
+        if (checkBox4.isChecked()) {
+        emailBodyBuilder.append("욕설, 비방을 해요").append("\n");}
+        if (checkBox5.isChecked()) {
+        emailBodyBuilder.append("다른 문제가 있어요: ");}
 
-    private void performReport(String reportedUserEmail) {
-        // 사용자를 신고 처리하는 코드 추가
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("UserAccount");
+        String emailBody = emailBodyBuilder.toString();
 
-        userRef.orderByChild("email").equalTo(reportedUserEmail).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    for (DataSnapshot userSnapshot : snapshot.getChildren()) {
-                        Integer currentReportCount = userSnapshot.child("reportCount").getValue(Integer.class);
-                        if (currentReportCount == null) {
-                            currentReportCount = 0;
-                        }
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        emailIntent.setType("plain/text");
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"seru0021@gmail.com"}); // 수신자 이메일 주소
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
+        emailIntent.putExtra(Intent.EXTRA_TEXT, emailBody);
 
-                        userSnapshot.getRef().child("reportCount").setValue(currentReportCount + 1);
-
-                        // 신고 횟수가 2번 이상이면 상태를 차단으로 변경
-                        if (currentReportCount + 1 >= 2) {
-                            userSnapshot.getRef().child("status").setValue("blocked");
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // 에러 처리
-            }
-        });
+        // 다이얼로그를 통해 여러 앱 선택
+        getContext().startActivity(Intent.createChooser(emailIntent, "이메일 어플 선택"));
     }
 }
-

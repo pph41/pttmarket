@@ -48,6 +48,8 @@ public class ChatActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
     private String postAuthorEmail;
     private String currentUserEmail;
+
+    private String senderId;
     private FirebaseStorage storage;
 
 
@@ -69,6 +71,7 @@ public class ChatActivity extends AppCompatActivity {
         postAuthorEmail = intent.getStringExtra("postAuthorEmail");
         currentUserEmail = intent.getStringExtra("currentUserEmail");
         roomName = intent.getStringExtra("roomName"); // 수정
+        senderId = mAuth.getCurrentUser().getEmail();
 
         // Firebase Realtime Database에서 채팅 메시지를 가져오는 코드
         databaseReference = FirebaseDatabase.getInstance().getReference("ChatRooms").child(roomName);
@@ -230,7 +233,7 @@ public class ChatActivity extends AppCompatActivity {
 
     // 팝업 창으로 신고 이유 선택
     private void showReportDialog() {
-        DialogReport dialog = new DialogReport(ChatActivity.this, roomName, currentUserEmail);
+        DialogReport dialog = new DialogReport(ChatActivity.this, roomName, senderId);
         dialog.show();
     }
 
