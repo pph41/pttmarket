@@ -29,7 +29,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.google.firebase.database.ValueEventListener;
 
-
 import android.provider.MediaStore;
 import android.widget.Toast;
 
@@ -51,8 +50,6 @@ public class ChatActivity extends AppCompatActivity {
 
     private String senderId;
     private FirebaseStorage storage;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -236,5 +233,4 @@ public class ChatActivity extends AppCompatActivity {
         DialogReport dialog = new DialogReport(ChatActivity.this, roomName, senderId);
         dialog.show();
     }
-
 }

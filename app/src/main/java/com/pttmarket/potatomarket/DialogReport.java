@@ -53,15 +53,20 @@ public class DialogReport extends Dialog {
         emailBodyBuilder.append("신고할 닉네임: ").append("\n");
         emailBodyBuilder.append("채팅방 이름: ").append(roomName).append("\n");
         if (checkBox1.isChecked()) {
-        emailBodyBuilder.append("비매너 사용자에요").append("\n");}
+            emailBodyBuilder.append("비매너 사용자에요").append("\n");
+        }
         if (checkBox2.isChecked()) {
-        emailBodyBuilder.append("잠수를 탔어요").append("\n");}
+            emailBodyBuilder.append("잠수를 탔어요").append("\n");
+        }
         if (checkBox3.isChecked()) {
-        emailBodyBuilder.append("사기 당했어요").append("\n");}
+            emailBodyBuilder.append("사기 당했어요").append("\n");
+        }
         if (checkBox4.isChecked()) {
-        emailBodyBuilder.append("욕설, 비방을 해요").append("\n");}
+            emailBodyBuilder.append("욕설, 비방을 해요").append("\n");
+        }
         if (checkBox5.isChecked()) {
-        emailBodyBuilder.append("다른 문제가 있어요: ");}
+            emailBodyBuilder.append("다른 문제가 있어요: ");
+        }
 
         String emailBody = emailBodyBuilder.toString();
 
