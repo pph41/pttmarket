@@ -72,7 +72,7 @@ public class DialogReport extends Dialog {
 
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
         emailIntent.setType("plain/text");
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"seru0021@gmail.com"}); // 수신자 이메일 주소
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"jjwwjj1215@gmail.com"}); // 수신자 이메일 주소
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
         emailIntent.putExtra(Intent.EXTRA_TEXT, emailBody);
 
