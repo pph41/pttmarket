@@ -55,7 +55,7 @@ public class boardActivity extends AppCompatActivity {
                 arrayList.clear(); //기존 배열 초기화
                 for(DataSnapshot Snapshot : dataSnapshot.getChildren()){
                     User user = Snapshot.getValue(User.class);
-                    arrayList.add(user); //담은 데이터를 배열 리스트에 넣고 리사이클러뷰로 전송 준비
+                    arrayList.add(0, user); //담은 데이터를 배열 리스트에 넣고 리사이클러뷰로 전송 준비 + 위에서부터 추가되게 코드 수정함
                 }
                 adapter.notifyDataSetChanged(); //리스트 저장 및 새로고침
             }
