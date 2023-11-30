@@ -45,7 +45,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v){
                 // 회원가입 처리, 학교이메일 강제 도메인 처리
-                String strEmail = mEtEmail.getText().toString();//+"@gwnu.ac.kr";
+                String strEmail = mEtEmail.getText().toString()+"@gwnu.ac.kr";// 웹메일
                 String strPwd = mEtPwd.getText().toString();
                 String strNname = mEtNname.getText().toString();
                 //파베 인증
