@@ -67,7 +67,15 @@ public class boardActivity extends AppCompatActivity {
             }
 
         });
-        adapter = new CustomAdapter(arrayList, this);
+        // 수정된 코드
+        adapter = new CustomAdapter(arrayList, this, new CustomAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                // Handle item click here
+                User selectedUser = arrayList.get(position);
+                // Implement the desired behavior for item click
+            }
+        });
         recyclerView.setAdapter(adapter);//리사이클러 뷰에 어뎁터 연결
 
         //리사이클링 뷰

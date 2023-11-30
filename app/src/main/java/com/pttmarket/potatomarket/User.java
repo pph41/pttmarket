@@ -5,14 +5,17 @@ public class User {//게시판에 사용될 리얼타임 db
     private String id;
     private String product;
     private String price;
+    private String email_id;
+    private int reportCount;
 
     public User(){}
 
-    public User(String profile,String product,String price,String id){
+    public User(String profile,String product,String price,String id, String email_id){
         this.profile = profile;
         this.product = product;
         this.price = price;
         this.id = id;
+        this.email_id = email_id;
     }
 
     public String getProfile() {
@@ -45,5 +48,13 @@ public class User {//게시판에 사용될 리얼타임 db
 
     public void setPrice(String price) {
         this.price = price;
+    }
+
+    public String getEmailid() {
+        return email_id;
+    }
+
+    public void setEmailid(String email_Id) {
+        this.email_id = email_id;
     }
 }

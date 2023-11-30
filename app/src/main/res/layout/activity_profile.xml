@@ -19,23 +19,59 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- 프로필 수정 버튼 -->
-            <Button
-                android:id="@+id/editProfileButton"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:text="프로필 수정"
-                android:layout_marginTop="16dp" />
+                android:layout_height="100dp"
+                android:gravity="center"
+                android:paddingLeft="40dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:id="@+id/my_profile"
+                    android:src="@drawable/ic_launcher_foreground"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingLeft="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20dp"
+                        android:text="아이디  "
+                        android:id="@+id/my_id"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20dp"
+                        android:text="이메일  "
+                        android:id="@+id/my_email"/>
+
+                </LinearLayout>
+
+
+
+            </LinearLayout>
+
+
+            <!-- 프로필 수정 버튼 -->
+<!--            <Button-->
+<!--                android:id="@+id/editProfileButton"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:background="@android:color/transparent"-->
+<!--                android:text="프로필 수정"-->
+<!--                android:layout_marginTop="16dp" />-->
 
             <!-- 내 게시글 버튼 -->
-            <Button
-                android:id="@+id/myPostsButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:text="내 게시글"
-                android:layout_marginTop="16dp" />
+<!--            <Button-->
+<!--                android:id="@+id/myPostsButton"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:background="@android:color/transparent"-->
+<!--                android:text="내 게시글"-->
+<!--                android:layout_marginTop="16dp" />-->
 
             <!-- 내 시간표 버튼 -->
             <Button
@@ -43,7 +79,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:text="내 시간표"
+                android:text="시간표 등록"
                 android:layout_marginTop="16dp" />
             <ImageView
                 android:layout_width="match_parent"
